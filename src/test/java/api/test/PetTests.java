@@ -6,21 +6,14 @@ import api.payload.Pet;
 import api.payload.Tag;
 import api.util.JSONSchemaValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import io.restassured.response.Response;
-import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -205,6 +198,63 @@ public class PetTests {
         Assert.assertEquals(contentType, "application/json");
 
         System.out.println("PET_004 - Delete a pet OK");
+    }
 
+    @Test(priority = 5, description = "PET_005 - Find a pet by status")
+    public static void getPetByStatus() throws IOException, ProcessingException {
+
+        System.out.println("PET_005 - Find a pet by status");
+
+        Response response = PetEndpoints.getPetByStatus("pending");
+        response.then().log().all();
+        Assert.assertEquals(response.getStatusCode(), 200);
+
+        //Headers validations
+        String contentType = response.getHeader("Content-Type");
+        Assert.assertEquals(contentType, "application/json");
+
+        //JSON Schema validation
+        String jsonResponse = response.getBody().asString();
+        String schemaFilePath = "src/test/resources/petListJSONSchema.json";
+        JSONSchemaValidator.validateJSONSchema(jsonResponse, schemaFilePath);
+
+        System.out.println("PET_005 - Find a pet by status OK");
+    }
+
+    @Test(priority = 6, description = "PET_006 - Find a pet by tag")
+    public static void getPetByTags() throws IOException, ProcessingException {
+
+        System.out.println("PET_006 - Find a pet by tag");
+
+        Response response = PetEndpoints.getPetByTag("tag1");
+        response.then().log().all();
+        Assert.assertEquals(response.getStatusCode(), 200);
+
+        //Headers validations
+        String contentType = response.getHeader("Content-Type");
+        Assert.assertEquals(contentType, "application/json");
+
+        //JSON Schema validation
+        String jsonResponse = response.getBody().asString();
+        String schemaFilePath = "src/test/resources/petListJSONSchema.json";
+        JSONSchemaValidator.validateJSONSchema(jsonResponse, schemaFilePath);
+
+        System.out.println("PET_006 - Find a pet by tag OK");
+    }
+
+    @Test(priority = 7, description = "PET_007 - Update a pet in the store with form data")
+    public static void updatePetWithFormData(){
+
+        System.out.println("PET_007 - Update a pet in the store with form data");
+
+        Response response = PetEndpoints.updatePetWithFormData(12, "Ramoncito", "available");
+        response.then().log().all();
+        Assert.assertEquals(response.getStatusCode(), 200);
+
+        //Headers validations
+        String contentType = response.getHeader("Content-Type");
+        Assert.assertEquals(contentType, "application/json");
+
+        System.out.println("PET_007 - Update a pet in the store with form data OK");
     }
 }

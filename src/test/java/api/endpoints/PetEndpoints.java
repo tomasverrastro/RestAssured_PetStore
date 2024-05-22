@@ -67,8 +67,50 @@ public class PetEndpoints {
         Response response =
             given()
                 .pathParam("petId", petId)
-                .when()
+            .when()
                 .delete(deletePet_url);
+
+        return response;
+    }
+
+    public static Response getPetByStatus(String status){
+
+        String getPetByStatus_url = getURL().getString("getPetByStatus_url");
+
+        Response response =
+            given()
+                .queryParam("status", status)
+            .when()
+                .get(getPetByStatus_url);
+
+        return response;
+    }
+
+    public static Response getPetByTag(String tag){
+
+        String getPetByTag_url = getURL().getString("getPetByTag_url");
+
+        Response response =
+            given()
+                .queryParam("tags", tag)
+                .when()
+                .get(getPetByTag_url);
+
+        return response;
+    }
+
+    public static Response updatePetWithFormData(int petID, String name, String status){
+
+        String updatePetWithFormData_url = getURL().getString("updatePetWithFormData_url");
+
+
+        Response response =
+            given()
+                .pathParam("petId", petID)
+                .queryParam("name", name)
+                .queryParam("status", status)
+            .when()
+                .post(updatePetWithFormData_url);
 
         return response;
     }
